@@ -1,0 +1,26 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: alpine:3.14
+    working_directory: /tmp/build
+    steps:
+      - checkout
+      - run:
+          name: "Install curl"
+          command: "apk update && apk add curl"
+      - run:
+          name: "Download Zig"
+          command: "curl -s -N https://ziglang.org/download/0.9.0/zig-linux-x86_64-0.9.0.tar.xz | tar Jx"
+      - run:
+          name: "Build"
+          command: "zig-linux-x86_64-0.9.0/zig build"
+      - store_artifacts:
+          path: /tmp/build/zig-out/bin/zig-stm32-blink.elf
+          destination: zig-stm32-blink.elf
+
+workflows:
+  workflow:
+    jobs:
+      - build
