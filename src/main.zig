@@ -1,4 +1,5 @@
 const regs = @import("registers.zig");
+const gpio = @import("gpio.zig");
 
 pub fn main() void {
     systemInit();
@@ -6,8 +7,14 @@ pub fn main() void {
     // Enable GPIOD port
     regs.RCC.AHB1ENR.modify(.{ .GPIODEN = 1 });
 
-    // Set pin 12/13/14/15 mode to general purpose output
-    regs.GPIOD.MODER.modify(.{ .MODER12 = 0b01, .MODER13 = 0b01, .MODER14 = 0b01, .MODER15 = 0b01 });
+    // Set PD12/13/14/15 mode to general purpose output
+    gpio.port.d.set_mode(12, .{ .output = .{ .mode = .push_pull, .speed = .low } });
+    gpio.port.d.set_mode(13, .{ .output = .{ .mode = .push_pull, .speed = .low } });
+    gpio.port.d.set_mode(14, .{ .output = .{ .mode = .push_pull, .speed = .low } });
+    gpio.port.d.set_mode(15, .{ .output = .{ .mode = .push_pull, .speed = .low } });
+
+    // Set PC13 mode to general purpose input
+    gpio.port.c.set_mode(13, .{ .input = .{ .mode = .pull_up } });
 
     // Set pin 12 and 14
     regs.GPIOD.BSRR.modify(.{ .BS12 = 1, .BS14 = 1 });
@@ -41,7 +48,7 @@ fn systemInit() void {
 
     // Enable FPU coprocessor
     // WARN: currently not supported in qemu, comment if testing it there
-    regs.FPU_CPACR.CPACR.modify(.{ .CP = 0b11 });
+    // regs.FPU_CPACR.CPACR.modify(.{ .CP = 0b11 });
 
     // Enable HSI
     regs.RCC.CR.modify(.{ .HSION = 1 });

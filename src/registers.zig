@@ -44,6 +44,17 @@ pub fn RegisterRW(comptime Read: type, comptime Write: type) type {
             self.write(old_value);
         }
 
+        pub fn modifyByName(self: Self, new_value: anytype) void {
+            if (Read != Write) {
+                @compileError("Can't modify because read and write types for this register aren't the same.");
+            }
+            var old_value = self.read();
+            inline for (new_value) |key_value| {
+                @field(old_value, key_value[0]) = key_value[1];
+            }
+            self.write(old_value);
+        }
+
         pub fn read_raw(self: Self) u32 {
             return self.raw_ptr.*;
         }
