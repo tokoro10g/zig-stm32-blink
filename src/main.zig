@@ -8,10 +8,10 @@ pub fn main() void {
     regs.RCC.AHB1ENR.modify(.{ .GPIODEN = 1 });
 
     // Set PD12/13/14/15 mode to general purpose output
-    gpio.port.d.set_mode(12, .{ .output = .{ .mode = .push_pull, .speed = .low } });
-    gpio.port.d.set_mode(13, .{ .output = .{ .mode = .push_pull, .speed = .low } });
-    gpio.port.d.set_mode(14, .{ .output = .{ .mode = .push_pull, .speed = .low } });
-    gpio.port.d.set_mode(15, .{ .output = .{ .mode = .push_pull, .speed = .low } });
+    gpio.port.d.set_mode(12, .{ .output = .{} });
+    gpio.port.d.set_mode(13, .{ .output = .{} });
+    gpio.port.d.set_mode(14, .{ .output = .{} });
+    gpio.port.d.set_mode(15, .{ .output = .{} });
 
     // Set PC13 mode to general purpose input
     gpio.port.c.set_mode(13, .{ .input = .{ .mode = .pull_up } });
@@ -22,11 +22,12 @@ pub fn main() void {
     while (true) {
         // Read the LED state
         var leds_state = regs.GPIOD.ODR.read();
+        var a = gpio.port.d.read_output(14);
         // Set the LED output to the negation of the currrent output
         regs.GPIOD.ODR.modify(.{
             .ODR12 = ~leds_state.ODR12,
             .ODR13 = ~leds_state.ODR13,
-            .ODR14 = ~leds_state.ODR14,
+            .ODR14 = ~a,
             .ODR15 = ~leds_state.ODR15,
         });
 
