@@ -14,11 +14,17 @@ jobs:
           name: "Download Zig"
           command: "curl -s -N https://ziglang.org/download/0.9.0/zig-linux-x86_64-0.9.0.tar.xz | tar Jx"
       - run:
-          name: "Build"
-          command: "zig-linux-x86_64-0.9.0/zig build"
+          name: "Build Debug"
+          command: "zig-linux-x86_64-0.9.0/zig build bin install -p Debug"
+      - run:
+          name: "Build Release"
+          command: "zig-linux-x86_64-0.9.0/zig build bin install -Drelease-fast=true -p Release"
       - store_artifacts:
-          path: /tmp/build/zig-out/bin/zig-stm32-blink.elf
-          destination: zig-stm32-blink.elf
+          path: /tmp/build/Debug
+          destination: Debug
+      - store_artifacts:
+          path: /tmp/build/Release
+          destination: Release
 
 workflows:
   workflow:
